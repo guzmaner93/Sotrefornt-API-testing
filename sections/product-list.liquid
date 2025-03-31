@@ -1,0 +1,72 @@
+<div id="product-list">
+    <h1>Lista de Productos</h1>
+</div>
+
+<script>
+    const shopifyStore = "{{ shop.permanent_domain }}"; 
+    const accessToken = "TU_ACCESS_TOKEN_AQUI";
+
+    async function fetchProducts() {
+        const url = `https://${shopifyStore}/api/2024-04/graphql.json`;
+
+        const query = {
+            query: `
+            {
+                products(first: 5) {
+                    edges {
+                        node {
+                            id
+                            title
+                            description
+                            featuredImage { url }
+                            variants(first: 1) {
+                                edges {
+                                    node {
+                                        price { amount, currencyCode }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }`
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Shopify-Storefront-Access-Token": accessToken
+                },
+                body: JSON.stringify(query),
+            });
+
+            const data = await response.json();
+            displayProducts(data.data.products.edges);
+        } catch (error) {
+            console.error("Error al obtener productos:", error);
+        }
+    }
+
+    function displayProducts(products) {
+        const productList = document.getElementById("product-list");
+        productList.innerHTML = "";
+
+        products.forEach(product => {
+            const node = product.node;
+            const price = node.variants.edges[0].node.price;
+
+            productList.innerHTML += `
+                <div class="product">
+                    <img src="${node.featuredImage.url}" alt="${node.title}">
+                    <h2>${node.title}</h2>
+                    <p>${node.description.substring(0, 100)}...</p>
+                    <p><strong>Precio:</strong> ${price.amount} ${price.currencyCode}</p>
+                </div>
+            `;
+        });
+    }
+
+    fetchProducts();
+</script>
