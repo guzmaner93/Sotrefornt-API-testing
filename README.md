@@ -35,5 +35,5 @@ Si quieres probarlo en local sin Shopify, puedes usar un servidor local como **L
 Este proyecto es de código abierto bajo la licencia MIT.
 
 ---
-_¡Si te sirvió este proyecto, no dudes en darle ⭐ en GitHub!_
+_¡Si te sirvió este proyecto, no dudes en darle ⭐_
 
